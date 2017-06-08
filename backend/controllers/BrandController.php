@@ -73,12 +73,10 @@ class BrandController extends \yii\web\Controller
     }
     //设置修改的方法
     public function actionEdit($id){
-//        if($model=Brand::findOne('status'==-1)){
-//            \Yii::$app->session->setFlash('danger','该数据无法进行修改');
-//        }else{
+        //通过该Id找到该对象的所有数据资料
             $model = Brand::findOne(['id'=>$id]);
 //            var_dump($model->status);exit;
-        if($model->status!=-1){
+//        if($model->status!=-1){
             //var_dump($model);exit;
             //判断是否通过requeset的传送方式传送过来
             if($model->load(\Yii::$app->request->post())){
@@ -106,10 +104,10 @@ class BrandController extends \yii\web\Controller
                     var_dump($model->getErrors());exit;
                 }
             }
-        }else{
-            \Yii::$app->session->setFlash('danger','对不起该数据不能进行修改');
-            return $this->redirect(['brand/list']);
-        }
+//        }else{
+//            \Yii::$app->session->setFlash('danger','对不起该数据不能进行修改');
+//            return $this->redirect(['brand/list']);
+//        }
         //显示修改视图
         return $this->render('add',['model'=>$model]);
     }
