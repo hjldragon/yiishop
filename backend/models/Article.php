@@ -18,9 +18,13 @@ use Yii;
 class Article extends \yii\db\ActiveRecord
 {
     static public $sexOption=[-1=>'删除',1=>'正常',0=>'隐藏'];
-    //建立1多的查询
+    //建立文章和文章分类1对1的查询
     public function getArticlecategory(){
         return $this->hasOne(Articlecategory::className(),['id'=>'articlecategory_id']);
+    }
+    //建立文章与文章详情的1对1的关系
+    public function getArticledetail(){
+        return $this->hasOne(Articledetail::className(),['article_id'=>'id']);
     }
     /**
      * @inheritdoc

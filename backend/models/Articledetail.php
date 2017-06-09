@@ -13,10 +13,10 @@ use Yii;
 class Articledetail extends \yii\db\ActiveRecord
 {
 //    static public $sexOption=[-1=>'删除',1=>'正常',0=>'隐藏'];
-    //建立一对多的文章
-    public function getArticle(){
-       return $this->hasOne(Article::className(),['id'=>'article_id']);
-    }
+    //建立一对一的文章
+//    public function getArticle(){
+//       return $this->hasOne(Article::className(),['id'=>'article_id']);
+//    }
     /**
      * @inheritdoc
      */
@@ -31,7 +31,7 @@ class Articledetail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            ['article_id', 'required'],
+           // ['article_id', 'required'],
             [['content'], 'string'],
         ];
     }
@@ -42,8 +42,8 @@ class Articledetail extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'article_id' => '文章id',
-            'content' => '简介',
+            'article_id' => '文章标题ID号',
+            'content' => '内容详情',
         ];
     }
 }
