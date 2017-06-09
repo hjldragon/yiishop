@@ -12,6 +12,7 @@ use Yii;
  */
 class Articledetail extends \yii\db\ActiveRecord
 {
+//    static public $sexOption=[-1=>'删除',1=>'正常',0=>'隐藏'];
     //建立一对多的文章
     public function getArticle(){
        return $this->hasOne(Article::className(),['id'=>'article_id']);

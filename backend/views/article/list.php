@@ -17,7 +17,7 @@
                 <td><?=$model->articlecategory->name?></td>
                 <td><?=$model->intro?></td>
                 <td><?=$model->sort?></td>
-                <td><?=\backend\models\Brand::$sexOption[$model->status];?></td>
+                <td><?=\backend\models\Article::$sexOption[$model->status];?></td>
                 <td><?=date('Y/m/d G:i:s',$model->create_time)?></td>
                 <td><?=\yii\bootstrap\Html::a('删除',['article/del','id'=>$model->id],['class'=>'btn btn-danger'])?>
                     <?=\yii\bootstrap\Html::a('修改',['article/edit','id'=>$model->id],['class'=>'btn btn-primary'])?>

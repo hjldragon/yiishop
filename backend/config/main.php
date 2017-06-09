@@ -46,7 +46,18 @@ return [
             'rules' => [
             ],
         ],
-
+        'qiniu'=>[
+            'class'=>\backend\components\Qiniu::className(),
+            'up_host'=>'http://up.qiniu.com',
+            //密钥的ak
+            'accessKey'=>'aYL8nG9EvFs5d8uuIrS0NJ7vg4n_gvV5ajyF3KnQ',
+            //密钥的sk
+            'secretKey'=>'ZW5BIxwKwsMKoB-fUd1ecuBn8XhL-GCMfsXFQbMn',
+            //7牛上面的保存名
+            'bucket'=>'hjlwork',
+            //保存名里的域名
+            'domain'=>'http://or9szvrjj.bkt.clouddn.com/',
+        ]
 
     ],
     'params' => $params,

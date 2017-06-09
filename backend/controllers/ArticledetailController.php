@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\Article;
+use backend\models\Articlecategory;
 use backend\models\Articledetail;
 use yii\data\Pagination;
 
@@ -56,11 +57,28 @@ class ArticledetailController extends \yii\web\Controller
         //var_dump($models);exit;
         return $this->render('list',['models'=>$models,'page'=>$page]);
     }
-//    public function actionDel($id){
-//        $model=Articledetail::findOne(['id'=>$id]);
-//        var_dump($model);exit;
-//    }
-//    public function actionEdit($id){
-//        $model=Articledetail::findOne(['id'=>$id]);exit;
-//    }
+    public function actionDel($id){
+        $model=Article::findOne(['id'=>$id]);
+        $model->status=-1;
+        $model->save();
+        return $this->redirect(['articledetail/list']);
+        //var_dump($model);exit;
+    }
+    //修改状态
+    public function actionEdit($id){
+        $model=Article::findOne(['id'=>$id]);
+        if($model->load(\Yii::$app->request->post())){
+            if($model->validate()){
+                $model->save();
+                \Yii::$app->session->setFlash('warning','修改成功');
+                return $this->redirect(['articledetail/list']);
+            }else{
+                var_dump($model->getErrors());exit;
+            }
+        }
+        $article=Articlecategory::find()->all();
+
+        //视图
+        return $this->render('edit',['model'=>$model,'article'=>$article]);
+    }
 }

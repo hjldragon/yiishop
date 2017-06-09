@@ -48,7 +48,7 @@ class ArticlecategoryController extends \yii\web\Controller
             'defaultPageSize'=>3,
         ]);
         //显示所有数据和条数
-        $models=$all->offset($page->offset)->limit($page->limit)->all();
+        $models=$all->offset($page->offset)->orderBy(['sort'=>SORT_DESC])->limit($page->limit)->all();
         return $this->render('list',['models'=>$models,'page'=>$page]);
     }
     //建立删除的方法，只修该状态

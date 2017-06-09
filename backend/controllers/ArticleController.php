@@ -43,7 +43,7 @@ class ArticleController extends \yii\web\Controller
             'defaultPageSize'=>3,
         ]);
         //设置每页显示
-        $models=$all->offset($page->offset)->limit($page->limit)->all();
+        $models=$all->offset($page->offset)->orderBy('sort desc')->limit($page->limit)->all();
         return $this->render('list',['models'=>$models,'page'=>$page]);
     }
     public  function actionDel($id){
