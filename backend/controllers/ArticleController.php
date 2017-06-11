@@ -41,7 +41,7 @@ class ArticleController extends \yii\web\Controller
            }
         }
         //获取文章分类的模型所有数据
-        $article=Articlecategory::find()->all();
+        $article=Articlecategory::findAll(['status'=>1]);
         //var_dump($article);exit;
         //分配显示视图
         return $this->render('add',['model'=>$model,'article'=>$article,'content'=>$content]);
