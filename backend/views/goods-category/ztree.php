@@ -21,13 +21,15 @@
             }
         };
         // zTree 的数据属性，深入使用请参考 API 文档（zTreeNode 节点数据详解）
-        var zNodes = <?=\yii\helpers\Json::encode($category)?>
+        var zNodes = <?=\yii\helpers\Json::encode($category);?>
 //            {id:1, pId:0, name: "父节点1"},
 //            {id:11, pId:1, name: "子节点1"},
 //            {id:12, pId:1, name: "子节点2"}
 //        ];
         $(document).ready(function(){
             zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+//            var nodes = zTreeObjgetSelectedNodes();
+//            zTreeObj.removeNode(nodes[i]);
         });
     </SCRIPT>
 </HEAD>

@@ -89,24 +89,10 @@ class GoodsCategoryController extends \yii\web\Controller
     public function actionList()
     {
         //找到数据模型的所有数据
-        $all = GoodsCategory::find();
-        //获取总条数
-        $total = $all->count();
+        $models = GoodsCategory::find()->orderBy('tree,lft')->all();
 
-        //调用框架的分页方法来设置总条数和每页显示条数
-        $page = new Pagination([
-            //总页数
-            'totalCount' => $total,
-            //每页显示数
-            'defaultPageSize' => 4,
-        ]);
 
-        //设置一个变量来分分页数据和所有模型数据
-        $models = $all->offset($page->offset)->orderBy('id desc')->limit($page->limit)->all();
-        //var_dump($models);exit;
-        //var_dump($models);
-        //显示视图
-        return $this->render('list', ['models' => $models, 'page' => $page]);
+        return $this->render('list', ['models' => $models]);
     }
 
     //设置分类的删除方法类
@@ -115,6 +101,7 @@ class GoodsCategoryController extends \yii\web\Controller
         //找到删除id对的数据
         $model = GoodsCategory::findOne(['id' => $id]);
         //var_dump($model);exit;
+        //不能删除根节点
         //进行删除保存
         $model->delete();
         //提示删除成功
@@ -139,15 +126,22 @@ class GoodsCategoryController extends \yii\web\Controller
         if ($model->load(\Yii::$app->request->post())) {
             //如果是，判断是否符合模型的验证规则
             if ($model->validate()) {
-                //判断是否是添加一级分类(parent_id是否为0)
+                //判断是否是修改一级分类(parent_id是否为0)
                 if ($model->parent_id) {
-                    //添加非一级分类
-                    //要添加非一节分类就要找到一节分类的上一级分类
+                    //修改非一级分类
+                    //要修改非一节分类就要找到一节分类的上一级分类
                     $parent = GoodsCategory::findOne(['id' => $model->parent_id]);
                     $model->prependTo($parent);//添加到上级分类的下面
                 } else {
-                    //添加一级分类
-                    $model->makeRoot();
+                    if($model->getOldAttribute('parent_id'==0)){
+                        //如果是一级分类就用
+                        $model->save();
+                    }else{
+                        //就修改一级分类
+                        $model->makeRoot();
+                    }
+
+
                 }
                 //如果都符合验证要求就保存数据
 //                var_dump($model);exit;
