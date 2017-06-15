@@ -18,8 +18,10 @@ return [
             'csrfParam' => '_csrf-backend',
         ],
         'user' => [
-            'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
+            'loginUrl'=>['user/login'],//如果用户没登录就自动跳转到这里
+            //设置实现认证接口的类
+            'identityClass' => backend\models\User::className(),
+            'enableAutoLogin' => true,//基于cookie的自动登录这里，需要打开
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
         ],
         'session' => [

@@ -40,6 +40,11 @@ class Goods extends \yii\db\ActiveRecord
 public function getBrand(){
         return $this->hasOne(Brand::className(),['id'=>'brand_id']);
 }
+//设置商品和相册1对多的关系
+    public function getImages()
+    {
+        return $this->hasOne(Images::className(),['goods_id'=>'id']);
+    }
     /**
      * @inheritdoc
      */

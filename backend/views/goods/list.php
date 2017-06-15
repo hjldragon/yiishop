@@ -1,3 +1,21 @@
+<?php
+//echo \yii\helpers\Html::beginForm(\yii\helpers\Url::to(['goods/list']),'get');
+//echo \yii\bootstrap\Html::textInput('keyword');
+//echo \yii\bootstrap\Html::textInput('sn');
+//echo \yii\helpers\Html::submitButton('搜索');
+//echo \yii\bootstrap\Html::endForm();
+$form = \yii\bootstrap\ActiveForm::begin([
+        'action'=>\yii\helpers\Url::to(['goods/list']),
+    'method'=>'get',
+    'options'=>['class'=>'form-inline']
+]);
+echo $form->field($model,'name')->textInput(['placeholder'=>'商品名'])->label(false);
+echo $form->field($model,'sn')->textInput(['placeholder'=>'货号'])->label(false);
+echo $form->field($model,'minPrice')->textInput(['placeholder'=>'￥'])->label(false);
+echo $form->field($model,'maxPrice')->textInput(['placeholder'=>'￥'])->label('-');
+echo \yii\bootstrap\Html::submitButton('搜索',['class'=>'btn btn-primary']);
+\yii\bootstrap\ActiveForm::end();
+?>
 <?=\yii\bootstrap\Html::a('添加商品',['goods/add'],['class'=>'btn btn-primary'])?>
     <table class="table table-bordered">
         <tr>
@@ -32,7 +50,9 @@
 
 
                 <td>
+
                     <?=\yii\bootstrap\Html::a('详情',['goods/content','id'=>$model->id],['class'=>'btn btn-primary'])?>
+                    <?=\yii\bootstrap\Html::a('相册',['goods/imgs','id'=>$model->id],['class'=>'btn btn-warning'])?>
                     <?=\yii\bootstrap\Html::a('删除',['goods/del','id'=>$model->id],['class'=>'btn btn-danger'])?>
                     <?=\yii\bootstrap\Html::a('修改',['goods/edit','id'=>$model->id],['class'=>'btn btn-primary'])?>
                 </td>
