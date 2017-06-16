@@ -25,7 +25,7 @@ class GoodsSearchForm extends Model{
     public  function  search(ActiveQuery $all){
         $this->load(\Yii::$app->request->get());
         if($this->name){
-            $all->andWhere(['like','name'.$this->name]);
+            $all->andWhere(['like','name',$this->name]);
         }if($this->sn){
             $all->andWhere(['like','sn',$this->sn]);
         }if($this->minPrice){

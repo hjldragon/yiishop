@@ -12,7 +12,7 @@ echo $form->field($model,'stock');
 echo $form->field($model,'is_on_sale',['inline'=>true])->radioList(\backend\models\Goods::$sexOption2);
 echo $form->field($model,'status',['inline'=>true])->radioList(\backend\models\Goods::$sexOption);
 echo $form->field($model,'sort');
-echo $form->field($model, 'content')->widget(\crazyfd\ueditor\Ueditor::className(),[]) ;
+echo $form->field($model1, 'content')->widget(\crazyfd\ueditor\Ueditor::className(),[]);
 echo \yii\bootstrap\Html::submitButton('提交',['class'=>'btn btn-primary']);
 \yii\bootstrap\ActiveForm::end();
 //设置树桩来添加good_category_id

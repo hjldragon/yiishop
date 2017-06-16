@@ -29,11 +29,13 @@ class GoodsController extends \yii\web\Controller
         $model1=new GoodsIntro();
         //获取商品添加日的模型数据
         $model2=new GoodsDayCount();
+
         //设置添加的传送发送
         if($model->load(\Yii::$app->request->post())&&$model1->load(\Yii::$app->request->post())){
             //实例化图片地址
             $model->imgFile=UploadedFile::getInstance($model,'imgFile');
             //验证是否符合Model里的验证规则
+
             //var_dump($model->good_category_id);exit;
             if($model->validate() && $model1->validate()){
                 //判断是否有图片传送过来
@@ -47,6 +49,7 @@ class GoodsController extends \yii\web\Controller
                 }
                 //获取商品添加日的添加商品数量
                 //设置一个变量来找到当日的数量
+                //var_dump($model);exit;
                 $dayAdd=GoodsDayCount::findOne(['day'=>date('Y-m-d')]);
                 //var_dump($dayAdd);exit;
                 //如果当日有数据
@@ -67,18 +70,21 @@ class GoodsController extends \yii\web\Controller
                 //获取该商品的添加时间
                 $model->create_time=date('Y/m/d G:i:s');
                 //获取该商品添加的货号
-                $model->sn=date('Ymd').str_pad($dayAdd->count,4,"0",STR_PAD_LEFT);
+               // $model->sn=date('Ymd').str_pad($dayAdd->count,4,"0",STR_PAD_LEFT);
+                $model->sn= date('Ymd').sprintf("%04d",$dayAdd->count+1);
+                //var_dump($model->sn);exit;
 //                var_dump($model->sn);exit;
                 //保存商品天数据
                 $model->save();
                 //获取商品详情的goods_id
+                //var_dump($model->id);exit;
                 $model1->goods_id=$model->id;
                 //保存商品详情数据
                 $model1->save();
                     //提示保存添加成功的消息
                 \Yii::$app->session->setFlash('success','添加商品成功');
                 //跳转页面
-                $this->redirect(['list']);
+                $this->redirect(['goods/list']);
             }else{
                 var_dump($model->getErrors());
                 var_dump($model1->getErrors());
@@ -99,6 +105,7 @@ public function actionList(){
     $all=Goods::find();
     //获取GOODSEARCHFORM的实例模型对象
     $model = new GoodsSearchForm();
+    //var_dump($model);exit;
 //    if($keyword=\Yii::$app->request->get('keyword')){
 //       $all ->andWhere(['like','name',$keyword]);
 //    }
@@ -107,11 +114,12 @@ public function actionList(){
 //    }
     //调用GOODsearchForm中的搜索方法
     $model->search($all);//$all是传到模型方法里好，识别搜索参数
-    //设置总条数
-    $total=$all->count();
+    //var_dump($all);
+//    //设置总条数
+//    $total=$all->count();
     //设置每页页数和总条数
     $page = new Pagination([
-        'totalCount'=>$total,
+        'totalCount'=>$all->count(),
     'defaultPageSize'=>4,
     ]);
     //设置变量来进行分页数据显示
@@ -160,7 +168,7 @@ public function actionDel($id){
                 //提示保存添加成功的消息
                 \Yii::$app->session->setFlash('success','商品修改成功');
                 //跳转页面
-                $this->redirect(['list']);
+                $this->redirect(['goods/list']);
             }else{
                 var_dump($model->getErrors());
                 var_dump($model1->getErrors());exit;
@@ -219,10 +227,11 @@ public function actionDel($id){
     {
         return [
             'ueditor' => [
-                'class' => '/crazyfd/yii2-ueditor/Upload',
+                'class' => 'crazyfd\ueditor\Upload',
                 'config'=>[
                     'uploadDir'=>date('Y/m/d')
                 ]
+
             ],
             //这是用来保存上面ueditor编辑器的图片地址
             'upload' => [
