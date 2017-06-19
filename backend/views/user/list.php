@@ -5,6 +5,7 @@
         <th>用户名</th>
         <th>密码</th>
         <th>邮箱</th>
+        <th>所有拥有的角色</th>
         <th>状态</th>
         <th>最后登录时间</th>
         <th>最后登录IP地址</th>
@@ -17,6 +18,12 @@
         <td><?=$model->username?></td>
         <td><?=$model->password_hash?></td>
         <td><?=$model->email?></td>
+        <td><?php
+            foreach (Yii::$app->authManager->getRolesByUser($model->id) as $role){
+                echo $role->name;
+                echo '|';
+            }
+            ?></td>
         <td><?=\backend\models\User::$sexOption[$model->status]?></td>
         <td><?=$model->last_time?></td>
         <td><?=$model->last_ip?></td>

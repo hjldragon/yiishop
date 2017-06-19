@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\components\RbacFilter;
 use backend\models\GoodsCategory;
 use function foo\func;
 use yii\data\Pagination;
@@ -10,11 +11,18 @@ use yii\web\NotFoundHttpException;
 
 class GoodsCategoryController extends \yii\web\Controller
 {
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+            ]
+        ];
+    }
     public function actionIndex()
     {
         return $this->render('index');
     }
-
     //测试嵌套组件
     public function actionTest()
     {
@@ -36,7 +44,6 @@ class GoodsCategoryController extends \yii\web\Controller
 //        var_dump($roots);
 
     }
-
     //测试树桩
     public function actionZtree()
     {
@@ -44,7 +51,6 @@ class GoodsCategoryController extends \yii\web\Controller
         $category = GoodsCategory::find()->asArray()->all();
         return $this->renderPartial('ztree', ['category' => $category]);
     }
-
     //设置商品分类添加类
     public function actionAdd()
     {
@@ -84,7 +90,6 @@ class GoodsCategoryController extends \yii\web\Controller
         //分配视图显示
         return $this->render('add', ['model' => $model, 'category' => $category]);
     }
-
     //建立显示商品分类的的视图,并设置分页
     public function actionList()
     {
@@ -94,7 +99,6 @@ class GoodsCategoryController extends \yii\web\Controller
 
         return $this->render('list', ['models' => $models]);
     }
-
     //设置分类的删除方法类
     public function actionDel($id)
     {
@@ -110,7 +114,6 @@ class GoodsCategoryController extends \yii\web\Controller
         return $this->redirect(['goods-category/list']);
 
     }
-
     //设置修改数据的方法
     public function actionEdit($id)
     {

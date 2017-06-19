@@ -23,6 +23,7 @@ return [
             'identityClass' => backend\models\User::className(),
             'enableAutoLogin' => true,//基于cookie的自动登录这里，需要打开
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
+
         ],
         'session' => [
             // this is the name of the session cookie used for login on the backend

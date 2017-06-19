@@ -2,11 +2,20 @@
 
 namespace backend\controllers;
 
+use backend\components\RbacFilter;
 use backend\models\Articlecategory;
 use yii\data\Pagination;
 
 class ArticlecategoryController extends \yii\web\Controller
 {
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+            ]
+        ];
+    }
     public function actionIndex()
     {
         return $this->render('index');

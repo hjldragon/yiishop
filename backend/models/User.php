@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 
 /**
@@ -23,7 +24,14 @@ use yii\web\IdentityInterface;
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
     public $password;//保存密码的明文
+    public $roles=[];
+//    public $name;//设置角色的字段名
     static public $sexOption=[1=>'在线',2=>'离线',3=>'正常'];
+    //设置角色的静态属性获取所有角色数据
+    static public function getRoles(){
+        $roles =\Yii::$app->authManager->getRoles();
+        return ArrayHelper::map($roles,'name','description');
+}
     /**
      * @inheritdoc
      */
@@ -48,6 +56,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             [['email'], 'unique'],//唯一
             [['email'], 'email'],//邮箱格式
             [['password_reset_token'], 'unique'],
+           ['roles','safe'],
         ];
     }
 
@@ -69,6 +78,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'updated_at' => 'Updated At',
             'last_time' => 'Last Time',
             'last_ip' => 'Last Ip',
+            'roles'=>'角色',
         ];
     }
     public  function beforeSave($insert)
@@ -152,5 +162,44 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return $this->auth_key=$authKey;
         // TODO: Implement validateAuthKey() method.
+    }
+    //设置添加角色的类
+    public function addRoles($id){
+        //实例化权限数据表
+        //根据传送过来的用户id给他添加角色
+       $authManger =  \Yii::$app->authManager;
+       //$roles = \Yii::$app->authManager->getRole($this->role);
+        //遍历所有选择的角色
+            foreach ($this->roles as $roleName){
+                $role = $authManger->getRole($roleName);
+                //分配给角色用户，保存到角色用户的表中了
+                $authManger->assign($role,$id);
+            }
+            return true;
+    }
+    //设置添加角色类的修改
+    public function EditRoles($id){
+        //实例化权限表
+        $authManger=\Yii::$app->authManager;
+        //获取原有的所有角色数据
+        //$roles=$authManger->getRolesByUser($id);
+        //移除所有角色名
+        $authManger->revokeAll($id);
+        //遍历所有修改的角色
+        //$roles =$this->role;
+//        if($authManger->update($roles,$id)){
+//            $authManger->removeChildren($id);
+            foreach ($this->roles as $roleName){
+                $role = $authManger->getRole($roleName);
+                $authManger->assign($role,$id);
+            }
+            return true;
+    }
+    //自动义回显角色数据类
+    public function loadData($roles){
+        //回显数据，因为是多个数据所以要遍历
+        foreach ($roles as $role){
+            $this->roles[]=$role->name;
+        }
     }
 }

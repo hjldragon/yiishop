@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\components\RbacFilter;
 use backend\models\Brand;
 use yii\data\Pagination;
 use yii\web\UploadedFile;
@@ -10,6 +11,14 @@ use crazyfd\qiniu\Qiniu;
 
 class BrandController extends \yii\web\Controller
 {
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+            ]
+        ];
+    }
     //显示所有品牌列表
     public function actionList()
     {

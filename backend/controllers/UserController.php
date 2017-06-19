@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use backend\models\ForgerForm;
 use backend\models\LoginForm;
+use backend\models\PermissionForm;
+use backend\models\RoleForm;
 use backend\models\User;
 use yii\data\Pagination;
 use yii\filters\AccessControl;
@@ -19,24 +21,28 @@ class UserController extends \yii\web\Controller
         //设置添加用户信息
     public function actionAdd(){
         //实例化模型对象
+        //实例化权限模型
+//        $role=User::getRoles();
+//     var_dump($role);exit;
+        //var_dump($permission);exit;
         $model = new User();
         //var_dump($model);exit;
         //查看传送方式
-        if($model->load(\Yii::$app->request->post())){
+        if($model->load(\Yii::$app->request->post()) && $model->validate()){
             //var_dump($model);exit;
-            if($model->validate()){
                 //将状态设置为10，也可以不设置，数据中空默认为10，在模型里设置了sexoption的
                // $model->status=12;
-
-                $model->save();
-                //提示添加成功功能
-                \Yii::$app->session->setFlash('success','注册成功');
-                return $this->redirect(['user/list']);
+            //var_dump($model->roles);exit;
+                $model->save(false);
+                $id=$model->id;
+                if($model->addRoles($id)){
+                    //提示添加成功功能
+                    \Yii::$app->session->setFlash('success','注册成功');
+                    return $this->redirect(['user/list']);
+                }
             }else{
-                var_dump($model->getErrors());exit;
-            }
+                //var_dump($model->getErrors());exit;
         }
-        
         //视图显示
         return $this->render('add',['model'=>$model]);
     }
@@ -62,25 +68,35 @@ class UserController extends \yii\web\Controller
         return $this->redirect(['user/list']);
     }
     public function actionEdit($id){
+        //移除所有角色，重新进行选择
         $model = User::findOne(['id'=>$id]);
+        //var_dump($model);exit;
+        //实例化rbac的数控库模型
+        $authManager=\Yii::$app->authManager;
+        //获取要修改角色的数据
+        $roles=$authManager->getRolesByUser($id);
+        //var_dump($role);exit;
+       // \Yii::$app->authManager->removeAllRoles();
         if($model==null){
             throw new NotFoundHttpException('账号不存在');
         }
-
+            $model->loadData($roles);
         //var_dump($model);exit;
         if($model->load(\Yii::$app->request->post())){
 //            var_dump($model);exit;
             if($model->validate()){
                 //加密加盐
                 $model->save();
-                \Yii::$app->session->setFlash('warning','修改成功');
-                return $this->redirect(['user/list']);
+                $model->id=$id;
+
+                if($model->EditRoles($id))
+                    \Yii::$app->session->setFlash('warning','修改成功');
+                    return $this->redirect(['user/list']);
+
             }else{
                 var_dump($model->getErrors());exit;
             }
-
         }
-
         return $this->render('add',['model'=>$model]);
     }
     //设置登录界面的验证码

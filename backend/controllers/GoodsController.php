@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\components\RbacFilter;
 use backend\models\Brand;
 use backend\models\Goods;
 use backend\models\GoodsCategory;
@@ -17,6 +18,14 @@ use yii\web\UploadedFile;
 
 class GoodsController extends \yii\web\Controller
 {
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+            ]
+        ];
+    }
     public function actionIndex()
     {
         return $this->render('index');
@@ -127,7 +136,6 @@ public function actionList(){
     //显示视图
     return $this->render('list',['models'=>$models,'page'=>$page,'model'=>$model]);
 }
-
 public function actionDel($id){
     $model = Goods::findOne(['id'=>$id]);
     $model->status=2;
@@ -136,7 +144,6 @@ public function actionDel($id){
     \Yii::$app->session->setFlash('danger','回收成功');
     return $this->redirect(['goods/list']);
 }
-
     public function actionEdit($id){
         //获取商品数据模型数据
         $model =Goods::findOne(['id'=>$id]);

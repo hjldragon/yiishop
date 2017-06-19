@@ -26,45 +26,9 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 
 <div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => 'My Company',
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-
-    $menuItems = [
-        ['label' => '品牌列表', 'url' => ['/brand/list']],
-        ['label' => '文章分类列表', 'url' => ['/articlecategory/list']],
-        ['label' => '文章列表', 'url' => ['/article/list']],
-        ['label' => '商品分类列表', 'url' => ['/goods-category/list']],
-        ['label' => '商品列表', 'url' => ['/goods/list']],
-        ['label' => '用户列表', 'url' => ['/user/list']],
-
-    ];
-    if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => '登录', 'url' => ['/user/login']];
-        //$menuItems[] = ['label' => '用户注销', 'url' => ['/user/logout']];
-        //$menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-    } else {
-        //$menuItems[] = ['label' => '用户注销', 'url' => ['/user/logout']];
-        $menuItems[] = '<li>'
-            . Html::beginForm(['/user/logout'], 'post')
-            . Html::submitButton(
-                '用户注销(' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout']
-            )
-            . Html::endForm()
-            . '</li>';
-    }
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItems,
-    ]);
-    NavBar::end();
-    ?>
+   <?php
+        echo \backend\widgets\Menuwidgets::widget();
+   ?>
 
     <div class="container">
         <?= Breadcrumbs::widget([
