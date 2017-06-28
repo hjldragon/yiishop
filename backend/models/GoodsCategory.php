@@ -21,6 +21,10 @@ class GoodsCategory extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+//    //用过字段名depth层级来创建商品分类的parent_id=0的1对多的关系
+        public function getChildren(){
+            return $this->hasMany(self::className(),['parent_id'=>'id']);
+        }
     public static function tableName()
     {
         return 'goods_category';

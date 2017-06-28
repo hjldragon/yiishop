@@ -14,6 +14,8 @@ class RbacController extends \yii\web\Controller
         return [
             'rbac'=>[
                 'class'=>RbacFilter::className(),
+                'only'=>['add-permission','index-permission','edit-permission','del-permission',
+                    'add-role','index-role','edit-role','del-role']
             ]
         ];
     }

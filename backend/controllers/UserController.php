@@ -148,9 +148,9 @@ class UserController extends \yii\web\Controller
             $model->status=2;
             $model->last_time=date('Y/m/d G:i:s');
             $model->last_ip=\Yii::$app->request->userIP;
-            $model->save(false);
             //退出登录
             \Yii::$app->user->logout();
+        $model->save();
             \Yii::$app->session->setFlash('success','用户'.$model->username.'注销成功');
            return $this->redirect(['user/login']);
 //       }else{

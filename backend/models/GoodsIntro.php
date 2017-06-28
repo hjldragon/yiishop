@@ -40,4 +40,7 @@ class GoodsIntro extends \yii\db\ActiveRecord
             'content' => '商品描述',
         ];
     }
+    public  function imgSrc(){
+        $this->content=preg_replace('/img src="/','img src="http://admin.hjlyii2.cn',$this->content);
+    }
 }

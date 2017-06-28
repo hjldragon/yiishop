@@ -51,10 +51,10 @@ echo \yii\bootstrap\Html::submitButton('搜索',['class'=>'btn btn-primary']);
 
                 <td>
 
-                    <?=\yii\bootstrap\Html::a('详情',['goods/content','id'=>$model->id],['class'=>'btn btn-primary'])?>
-                    <?=\yii\bootstrap\Html::a('相册',['goods/imgs','id'=>$model->id],['class'=>'btn btn-warning'])?>
-                    <?=\yii\bootstrap\Html::a('删除',['goods/del','id'=>$model->id],['class'=>'btn btn-danger'])?>
-                    <?=\yii\bootstrap\Html::a('修改',['goods/edit','id'=>$model->id],['class'=>'btn btn-primary'])?>
+                    <?php if(\Yii::$app->user->can('goods/content')){echo \yii\bootstrap\Html::a('详情',['goods/content','id'=>$model->id],['class'=>'btn btn-primary']);}?>
+                    <?php if(\Yii::$app->user->can('goods/imgs')){echo \yii\bootstrap\Html::a('相册',['goods/imgs','id'=>$model->id],['class'=>'btn btn-warning']);}?>
+                    <?php if(\Yii::$app->user->can('goods/del')){echo \yii\bootstrap\Html::a('删除',['goods/del','id'=>$model->id],['class'=>'btn btn-danger']);}?>
+                    <?php if(\Yii::$app->user->can('goods/edit')){echo \yii\bootstrap\Html::a('修改',['goods/edit','id'=>$model->id],['class'=>'btn btn-primary']);}?>
                 </td>
             </tr>
         <?php endforeach;?>

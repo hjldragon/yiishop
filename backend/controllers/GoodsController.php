@@ -23,6 +23,7 @@ class GoodsController extends \yii\web\Controller
         return [
             'rbac'=>[
                 'class'=>RbacFilter::className(),
+                'only'=>['add','list','edit','del','imgs','content','index']
             ]
         ];
     }
@@ -80,14 +81,16 @@ class GoodsController extends \yii\web\Controller
                 $model->create_time=date('Y/m/d G:i:s');
                 //获取该商品添加的货号
                // $model->sn=date('Ymd').str_pad($dayAdd->count,4,"0",STR_PAD_LEFT);
-                $model->sn= date('Ymd').sprintf("%04d",$dayAdd->count+1);
+                $model->sn = date('Ymd').sprintf("%04d",$dayAdd->count+1);
                 //var_dump($model->sn);exit;
 //                var_dump($model->sn);exit;
+
                 //保存商品天数据
                 $model->save();
                 //获取商品详情的goods_id
                 //var_dump($model->id);exit;
                 $model1->goods_id=$model->id;
+                $model1->imgSrc();
                 //保存商品详情数据
                 $model1->save();
                     //提示保存添加成功的消息
@@ -171,6 +174,7 @@ public function actionDel($id){
                 //保存商品天数据
                 $model->save();
                 //保存商品详情数据
+                $model1->imgSrc();
                 $model1->save();
                 //提示保存添加成功的消息
                 \Yii::$app->session->setFlash('success','商品修改成功');
