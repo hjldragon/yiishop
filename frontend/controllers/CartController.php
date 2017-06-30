@@ -93,6 +93,8 @@ class CartController extends \yii\web\Controller
 
     //设置显示购物车数据
     public function actionCart(){
+        $money=0;
+        $models=[];
         //判断用户是否进行里的登录的购物车
         if(\Yii::$app->user->isGuest){
             //没有登录的购物车
@@ -109,28 +111,25 @@ class CartController extends \yii\web\Controller
             }
             //var_dump($cart);exit;
             //将获取的商品数据用数组变量来保存
-            $models=[];
             foreach ($cart as $k=>$amount){
                 //var_dump($k);exit;
                 $goods=Goods::findOne(['id'=>$k])->attributes;
-
                 $goods['amount']=$amount;
                 $models[]=$goods;
             }
-            //var_dump($models);exit;
+            //var_dump($goods);exit;
             //var_dump($models);exit;
         }else{
             //登录了的购物车
                  //已登录，从数据库读取所有数据出来
             $carts=Cart::findAll(['member_id'=>\Yii::$app->user->identity->getId()]);
             $models=[];
-            $money=0;
+
             foreach ($carts as $cart){
                 $goods=Goods::findOne(['id'=>$cart->goods_id])->attributes;
                 $goods['amount']=$cart->amount;
                 $money+=$goods['shop_price']*$goods['amount'];
                 $models[]=$goods;
-
 
             }
             //var_dump($money);exit;
@@ -159,7 +158,7 @@ class CartController extends \yii\web\Controller
                 }else{
                     $cart=unserialize($cookie->value);
                 }
-//重新数据化cookie
+                //重新数据化cookie
                 $cookies=\Yii::$app->response->cookies;
                 //检查购物车中是否有该商品,有，数量累加
                 if($amount){
@@ -172,7 +171,6 @@ class CartController extends \yii\web\Controller
                 $cookie=new Cookie([
                    'name'=>'cart','value'=>serialize($cart)
                 ]);
-
                 $cookies->add($cookie);
             }else{
                 //登录状态的购物车

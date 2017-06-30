@@ -4,6 +4,8 @@ namespace frontend\controllers;
 use backend\models\Goods;
 use backend\models\GoodsCategory;
 use backend\models\Images;
+use frontend\components\SphinxClient;
+use frontend\models\GoodsSearchForm;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -49,5 +51,54 @@ class GoodsController extends Controller{
         //var_dump($model);exit;
         return $this->render('goods',['goods'=>$goods,'images'=>$images]);
     }
+    //商品搜索
+    public function actionSearch(){
 
+
+        $all = Goods::find();
+        //$search->search($all);
+        if($keyword=\Yii::$app->request->get('keyword')){
+        //引入中文收缩的文件
+        $cl = new SphinxClient();
+        $cl->SetServer ( '127.0.0.1', 9312);
+//$cl->SetServer ( '10.6.0.6', 9312);
+//$cl->SetServer ( '10.6.0.22', 9312);
+//$cl->SetServer ( '10.8.8.2', 9312);
+        $cl->SetConnectTimeout ( 10 );
+        $cl->SetArrayResult ( true );
+// $cl->SetMatchMode ( SPH_MATCH_ANY);
+        $cl->SetMatchMode ( SPH_MATCH_ALL);
+        $cl->SetLimits(0, 1000);
+        //$info = 'JPK';
+        $res = $cl->Query($keyword, 'goods');//shopstore_search
+//print_r($cl);
+       // print_r($res);
+            //这是没搜索到
+        if(!isset($res['matches'])){
+            $all->where(['id'=>0]);
+        }else{
+            //搜索结果显示
+            $ids=ArrayHelper::map($res['matches'],'id','id');
+            $goods=$all->where(['in','id',$ids]);
+        }
+        //var_dump($res);exit;
+        }
+        $goods=$all->all();
+        $keywords = array_keys($res['words']);
+        $options = array(
+            'before_match' => '<span style="color:red;">',
+            'after_match' => '</span>',
+            'chunk_separator' => '...',
+            'limit' => 80, //如果内容超过80个字符，就使用...隐藏多余的的内容
+        );
+//关键字高亮
+//        var_dump($models);exit;
+        foreach ($goods as $index => $item) {
+            $name = $cl->BuildExcerpts([$item->name], 'goods', implode(',', $keywords), $options); //使用的
+            //索引不能写*，关键字可以使用空格、逗号等符号做分隔，放心，sphinx很智能，会给你拆分的
+            $goods[$index]->name = $name[0];
+//            var_dump($name);
+        }
+        return $this->render('search',['goods'=>$goods]);
+    }
 }

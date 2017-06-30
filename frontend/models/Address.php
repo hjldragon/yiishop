@@ -48,6 +48,7 @@ class Address extends \yii\db\ActiveRecord
         return [
             [['name', 'member_id', 'provice', 'city', 'address', 'tel'], 'required'],
             [['member_id', 'tel', 'status'], 'integer'],
+            [['tel'], 'string', 'max' => 11],
             [['name'], 'string', 'max' => 50],
             [['provice', 'city', 'area'], 'string', 'max' => 30],
             [['address'], 'string', 'max' => 100],

@@ -79,8 +79,8 @@ use common\widgets\Alert;
             <div class="search fl">
                 <div class="search_form">
                     <div class="form_left fl"></div>
-                    <form action="" name="serarch" method="get" class="fl">
-                        <input type="text" class="txt" value="请输入商品关键字" /><input type="submit" class="btn" value="搜索" />
+                    <form action="<?=\yii\helpers\Url::to(['goods/search'])?>" name="search" method="get" class="fl">
+                        <input type="text" class="txt" name="keyword" value="请输入商品关键字" /><input type="submit" class="btn" value="搜索" />
                     </form>
                     <div class="form_right fl"></div>
                 </div>
@@ -89,7 +89,7 @@ use common\widgets\Alert;
 
                 <div class="hot_search">
                     <strong>热门搜索:</strong>
-                    <a href="">D-Link无线路由</a>
+                    <a href="">JPK</a>
                     <a href="">休闲男鞋</a>
                     <a href="">TCL空调</a>
                     <a href="">耐克篮球鞋</a>
@@ -144,7 +144,7 @@ use common\widgets\Alert;
                   <div class="cart fl">
                 <dl>
                     <dt>
-                        <a href="">去购物车结算</a>
+                        <a href="/cart/cae">去购物车结算</a>
                         <b></b>
                     </dt>
                     <dd>

@@ -66,8 +66,8 @@ use common\widgets\Alert;
             <div class="search fl">
                 <div class="search_form">
                     <div class="form_left fl"></div>
-                    <form action="" name="serarch" method="get" class="fl">
-                        <input type="text" class="txt" value="请输入商品关键字" /><input type="submit" class="btn" value="搜索" />
+                    <form action="<?=\yii\helpers\Url::to(['goods/search'])?>" name="serarch" method="get" class="fl">
+                        <input type="text" class="txt" name="keyword" value="请输入商品关键字" /><input type="submit" class="btn" value="搜索" />
                     </form>
                     <div class="form_right fl"></div>
                 </div>
@@ -136,7 +136,7 @@ use common\widgets\Alert;
             <div class="cart fl">
                 <dl>
                     <dt>
-                        <a href="">去购物车结算</a>
+                        <a href="/cart/cart.html">去购物车结算</a>
                         <b></b>
                     </dt>
                     <dd>
@@ -180,7 +180,7 @@ use common\widgets\Alert;
                 <li><a href="">品牌大全</a></li>
                 <li><a href="">团购</a></li>
                 <li><a href="">积分商城</a></li>
-                <li><a href="">夺宝奇兵</a></li>
+                <li><a href="<?=\yii\helpers\Url::to(['user/ditu'])?>">夺宝奇兵</a></li>
             </ul>
             <div class="right_corner fl"></div>
         </div>

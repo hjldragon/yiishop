@@ -39,10 +39,12 @@ class UserController extends Controller{
         $model = new LoginForm();
         if($model->load(\Yii::$app->request->post())&&$model->validate()){
             if($model->validateMember()){
-
-                return $this->redirect(['user/address']);
+                $model->addCart();
+                return $this->goBack();//直接返回到上次进入页面
+                //return $this->redirect(['goodscategory/index']);
             }
         }
+        \Yii::$app->user->setReturnUrl(\Yii::$app->request->referrer);//设    置登录前页面
             return $this->render('login',['model'=>$model]);
     }
     public function actionLogout(){
@@ -169,5 +171,7 @@ public function actionSendSms(){
         echo '发送失败';
     }
 }
-
+        public function actionDitu(){
+                        return $this->render('ditu');
+        }
 }
