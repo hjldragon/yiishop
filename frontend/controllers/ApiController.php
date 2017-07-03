@@ -8,10 +8,12 @@ use backend\models\Brand;
 use backend\models\Goods;
 use backend\models\GoodsCategory;
 use frontend\models\Address;
+use frontend\models\Cart;
 use frontend\models\LoginForm;
 use frontend\models\Member;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\Cookie;
 use yii\web\Response;
 
 class ApiController extends Controller{
@@ -57,6 +59,8 @@ class ApiController extends Controller{
             $user=Member::findOne(['username'=>$request->post('username')]);
             if($user && \Yii::$app->security->validatePassword($request->post('pwd'),$user->password_hash)){
                         \Yii::$app->user->login($user);
+                        $model=new LoginForm();
+                        $model->addCart();
                         return['status'=>'1','msg'=>'登录成功','data'=>$user->username];
             }return['status'=>'-1','msg'=>'账号或密码错误'];
 
@@ -245,5 +249,159 @@ class ApiController extends Controller{
     public function actionGetfenlei(){
         $ac=Articlecategory::find()->asArray()->all();
         return ['status'=>'1','msg'=>'','data'=>$ac];
+    }
+    //添加商品购物车
+    public function actionAddCart(){
+        $request =\Yii::$app->request;
+        //先获取添加购物车的商品数量和商品id
+        if($request->isPost){
+            $goods_id=$request->post('goods_id');
+            $amount=$request->post('amount');
+            $good=Goods::findOne(['id'=>$goods_id]);
+            if($good==null){
+                return ['status'=>'-1','msg'=>'商品已售空'];
+            }
+            //判断用户是否登录
+            if(\Yii::$app->user->isGuest){
+                //如果用户没有登录就获取cookie的添加数据
+                //实例化cookies
+                $cookies=$request->cookies;
+                //获取cookie数据
+                $cookie=$cookies->get('cart');
+                if($cookie==null){
+                    $cart=[];
+                }else {
+                    //获取cookie中的保存数据
+                    $cart = unserialize($cookie->value);
+                }
+                //查看购物车时候有该商品，有就存在添加商品的数量的累加
+                if(key_exists($good->id,$cart)){
+                    $cart[$goods_id]+=$amount;
+                }else{
+                    $cart[$goods_id]=$amount;
+                }
+                $cookie = new Cookie([
+                    'name'=>'cart','value'=>serialize($cart)
+                ]);
+                //重新实例化cookie
+                $cookies=\Yii::$app->response->cookies;
+                $cookies->add($cookie);
+            }else{
+                //获取登录用户id
+                $member_id=\Yii::$app->user->getId();
+                //获取未登录时的cookie数据
+                //合并登录状态以获取的cookie数据
+                $model = Cart::findOne(['goods_id'=>$goods_id,'member_id'=>$member_id]);
+                //如果商品存在数量的添加
+                if($model){
+                    $model->amount+=$amount;
+                    $model->save();
+                    return ['status'=>'1','msg'=>'','data'=>$model];
+                }else{
+                    //新添加的商品
+                    $carts = new Cart();
+                    $carts->member_id=$member_id;
+                    $carts->goods_id=$goods_id;
+                    $carts->amount=$amount;
+                    if($carts->validate()){
+                        $carts->save();
+                        return ['status'=>'1','msg'=>'','data'=>$carts];
+                    }
+                }
+            }
+        }else{
+            return ['status'=>'-1','msg'=>'请用post传送方式'];
+        }
+    }
+    //修改购物车商品数量,和删除商品
+    public function actionEditCart(){
+        $request= \Yii::$app->request;
+        if($request->isPost){
+            $goods_id=$request->post('goods_id');
+            $amount=$request->post('amount');
+            $good=Goods::findOne(['id'=>$goods_id]);
+            if($good==null){
+                return ['status'=>'-1','该商品已不存在'];
+            }
+            //判断用户是否的登录
+            if(\Yii::$app->user->isGuest){
+                //这是用户未登录的状态      //获取cookies数据
+                $cookies =$request->cookies;
+                $cookie=$cookies->get('cart');
+                if($cookie==null){
+                    $cart =[];
+                }else{
+                    $cart=unserialize($cookie->value);
+                }
+                if($amount){
+                    $cart['goods_id']=$amount;
+                }else{
+                    unset($cart['goods_id']);
+
+                }
+                //重新是实例化cookie
+                $cookies=\Yii::$app->response->cookies;
+                $cookie= new Cookie([
+                    'name'=>'cart','value'=>serialize($cart)
+                ]);
+                $cookies->add($cookie);
+                if($amount==0){
+                    return['status'=>'1','msg'=>'未登录商品删除成功'];
+                }else{
+                    return['status'=>'1','msg'=>'未登录保存数量成功'];
+                }
+            }else{
+                //这是用户登录状态
+                //获取用户的购物车信息
+                $cart = Cart::findOne(['goods_id'=>$goods_id,'member_id'=>\Yii::$app->user->getId()]);
+                //如果购车有就接收传送过来的商品数量
+                //判断是否有数量传送过来，如果amount=0，就删除该商品
+                if($amount){
+                    if($cart){
+                        $cart->amount=$amount;
+                        $cart->save();
+                        return ['status'=>'1','msg'=>'数量修改成功','data'=>$cart];
+                    }return ['status'=>'-1','msg'=>'购物车没有商品'];
+
+                }else{
+                    $cart->delete();
+                    return['status'=>'1','mgs'=>'商品删除成功'];
+                }
+            }
+
+
+        }else{
+            return['status'=>'-1','msg'=>'请用post的传送方式'];
+        }
+
+    }
+    //清空购物车
+    public function actionDelCart(){
+        $request =\Yii::$app->request;
+        //判断用户是否登录
+        if($request->isPost){
+            if(\Yii::$app->user->isGuest){
+                //没有登录获取cookie的所有数据
+                $cookies=$request->cookies;
+                $cookie=$cookies->get('cart');
+                //判断cookie是否有数据
+                if($cookie==null){
+                    return ['status'=>'-1','msg'=>'购物车没有商品'];
+                }else{
+                    $cookies->remove($cookie);
+                    return['status'=>1,'msg'=>'购物车已清空'];
+                }
+            }else{
+                //用户登录了
+                $carts =Cart::findAll(['member_id'=>\Yii::$app->user->getId()]);
+                if($carts){
+
+                }
+
+            }
+        }else{
+            return ['status'=>'-1','msg'=>'请用post传送方式'];
+        }
+
     }
 }
